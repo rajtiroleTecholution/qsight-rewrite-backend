@@ -4,11 +4,12 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const Encounter = require('./models/encounter');
 const Product = require('./models/products');
-
+const cors = require('cors'); // Import the cors package
 const app = express();
 app.use(bodyParser.json());
 const PORT = process.env.PORT || 4000;
 const MONGO_URI = process.env.MONGO_URI;
+app.use(cors()); // Use the cors middleware
 
 // Connect to MongoDB
 mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
