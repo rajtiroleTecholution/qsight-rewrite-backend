@@ -20,7 +20,7 @@ const encounterSchema = new mongoose.Schema({
     serial_number: Number,
     product_id: {
       type: Number,
-      unique: true,  // Ensure product_id is unique within the products_list
+      unique: true, 
     },
     manufacturer_name: String,
     brand_name: String,

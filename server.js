@@ -23,21 +23,49 @@ app.get('/api/encounters', async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch encounters' });
   }
 });
+app.get('/api/products/:productId', async (req, res) => {
+    const { productId } = req.params;
+  
+    try {
+      const product = await Product.findOne({ product_id: productId });
+  
+      if (!product) {
+        return res.status(404).json({ error: 'Product not found' });
+      }
+  
+      res.json(product);
+    } catch (error) {
+      res.status(500).json({ error: 'Failed to fetch product' });
+    }
+  });
 
 // Create a new encounter
 app.post('/api/encounters', async (req, res) => {
-  try {
-    const encounter = new Encounter(req.body);
-    await encounter.save();
-    res.status(201).send({ message: 'Encounter created successfully', encounter });
-  } catch (err) {
-    if (err.code === 11000) { // Handle duplicate key error (unique constraint)
-      res.status(400).send({ error: 'Encounter with this case_id already exists' });
-    } else {
+    try {
+      const { case_id } = req.body;
+  
+      // Check if case_id is provided
+      if (!case_id) {
+        return res.status(400).send({ error: 'case_id is required' });
+      }
+  
+      // Check if encounter with the provided case_id already exists
+      const existingEncounter = await Encounter.findOne({ case_id });
+      if (existingEncounter) {
+        return res.status(400).send({ error: `Encounter with case_id ${case_id} already exists` });
+      }
+  
+      // Create and save new encounter
+      const newEncounter = new Encounter(req.body);
+      await newEncounter.save();
+      
+      res.status(201).send({ message: 'Encounter created successfully', encounter: newEncounter });
+    } catch (err) {
+      // Handle errors such as validation issues or database errors
       res.status(500).send({ error: 'Error creating encounter' });
     }
-  }
-});
+  });
+  
 
 // Add a product to the products_list of an encounter (using case_id)
 app.post('/api/encounters/:case_id/products', async (req, res) => {
