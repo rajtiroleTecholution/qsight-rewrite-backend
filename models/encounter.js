@@ -16,7 +16,7 @@ const encounterSchema = new mongoose.Schema({
   physician: String,
   status: {
     type: String,
-    enum: ['ongoing', 'completed', 'upcoming'], // Valid status values
+    enum: ['Ongoing Procedure', 'Completed', 'Upcoming'], // Valid status values
   },
   products_list: [{
     type: mongoose.Schema.Types.ObjectId,

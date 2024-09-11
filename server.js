@@ -130,35 +130,41 @@ app.post('/api/encounters', async (req, res) => {
 // Add a product to the products_list of an encounter (using case_id)
 app.post('/api/encounters/:case_id/products', async (req, res) => {
     const { case_id } = req.params;
-    const { product_id } = req.body; // Just the product_id is sent in the body
-  
+    const { product_id } = req.body; // Only the product_id is sent in the body
+  console.log(case_id);
+  console.log(product_id);
     try {
+      // Find the encounter by case_id
       const encounter = await Encounter.findOne({ case_id });
       if (!encounter) {
         return res.status(404).json({ error: 'Encounter not found' });
       }
   
+      // Find the product by product_id
       const product = await Product.findOne({ product_id });
       if (!product) {
         return res.status(404).json({ error: 'Product not found' });
       }
-      console.log(product);
-      console.log(case_id);
-      // Check if product_id is already in the products_list
-      const existingProduct = encounter.products_list.find(p => p.product_id === product_id);
-      if (existingProduct) {
-        return res.status(400).json({ error: 'Product with this product_id already exists in the encounter' });
+  
+      // Check if the product's MongoDB ObjectId is already in the encounter's products_list
+      const productExists = encounter.products_list.some(p => p.equals(product._id));
+      if (productExists) {
+        return res.status(400).json({ error: 'Product already exists in the encounter' });
       }
   
-      // Add the full product details to the encounter's products_list
-      encounter.products_list.push(product);
+      // Add the product's ObjectId to the products_list of the encounter
+      encounter.products_list.push(product._id);
+      
+      // Save the updated encounter
       await encounter.save();
   
       res.json({ message: 'Product added to encounter successfully', encounter });
     } catch (error) {
+      console.error('Failed to add product to encounter:', error);
       res.status(500).json({ error: 'Failed to add product to encounter' });
     }
   });
+  
   app.get('/api/encounters/:case_id/products', async (req, res) => {
     const { case_id } = req.params;
   
