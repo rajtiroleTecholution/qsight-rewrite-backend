@@ -38,7 +38,42 @@ app.get('/api/products/:productId', async (req, res) => {
       res.status(500).json({ error: 'Failed to fetch product' });
     }
   });
-
+  app.post('/api/products', async (req, res) => {
+    const { product_id, lot_number, catalog_number, serial_number, manufacturer_name, brand_name, expiration_date, recorded_date, consumption, transaction_type, site, side } = req.body;
+  
+    try {
+      // Check if the product with the same product_id already exists
+      const existingProduct = await Product.findOne({ product_id });
+      
+      if (existingProduct) {
+        return res.status(400).json({ error: 'Product with this product_id already exists' });
+      }
+  
+      // Create a new product
+      const newProduct = new Product({
+        product_id,
+        lot_number,
+        catalog_number,
+        serial_number,
+        manufacturer_name,
+        brand_name,
+        expiration_date,
+        recorded_date,
+        consumption,
+        transaction_type,
+        site,
+        side
+      });
+  
+      // Save the product to the database
+      await newProduct.save();
+  
+      res.status(201).json({ message: 'Product added successfully', product: newProduct });
+    } catch (error) {
+      console.error('Error adding product:', error);
+      res.status(500).json({ error: 'Failed to add product' });
+    }
+  });
 // Create a new encounter
 app.post('/api/encounters', async (req, res) => {
     try {
