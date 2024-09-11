@@ -3,6 +3,7 @@ require('dotenv').config();
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const Encounter = require('./models/encounter');
+const Product = require('./models/products');
 
 const app = express();
 app.use(bodyParser.json());
@@ -48,7 +49,7 @@ app.get('/api/products/:productId', async (req, res) => {
       if (existingProduct) {
         return res.status(400).json({ error: 'Product with this product_id already exists' });
       }
-  
+  console.log('ffasdfdsf');
       // Create a new product
       const newProduct = new Product({
         product_id,
@@ -74,89 +75,149 @@ app.get('/api/products/:productId', async (req, res) => {
       res.status(500).json({ error: 'Failed to add product' });
     }
   });
-// Create a new encounter
+  app.get('/api/products', async (req, res) => {
+  
+    try {
+        const products = await Product.find();
+        res.json(products);
+      } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch encounters' });
+      }
+  });
 app.post('/api/encounters', async (req, res) => {
     try {
-      const { case_id } = req.body;
+      const { case_id, mrn_number, patient_name, procedure, scheduled_at, end_time, room, nurse, physician, status } = req.body;
   
-      // Check if case_id is provided
-      if (!case_id) {
-        return res.status(400).send({ error: 'case_id is required' });
+      // Check if required fields are provided
+      if (!case_id || !mrn_number || !patient_name || !procedure || !scheduled_at || !end_time || !room || !nurse || !physician || !status) {
+        return res.status(400).json({ error: 'All required fields must be provided' });
       }
+  
+     
   
       // Check if encounter with the provided case_id already exists
       const existingEncounter = await Encounter.findOne({ case_id });
       if (existingEncounter) {
-        return res.status(400).send({ error: `Encounter with case_id ${case_id} already exists` });
+        return res.status(400).json({ error: `Encounter with case_id ${case_id} already exists` });
       }
   
       // Create and save new encounter
-      const newEncounter = new Encounter(req.body);
+      const newEncounter = new Encounter({
+        case_id,
+        mrn_number,
+        patient_name,
+        procedure,
+        scheduled_at,
+        end_time,
+        room,
+        nurse,
+        physician,
+        status,
+      });
+      console.log(newEncounter);
       await newEncounter.save();
-      
-      res.status(201).send({ message: 'Encounter created successfully', encounter: newEncounter });
+  
+      res.status(201).json({ message: 'Encounter created successfully', encounter: newEncounter });
     } catch (err) {
-      // Handle errors such as validation issues or database errors
-      res.status(500).send({ error: 'Error creating encounter' });
+      console.error('Error creating encounter:', err);
+      res.status(500).json({ error: 'Error creating encounter' });
     }
   });
+  
   
 
 // Add a product to the products_list of an encounter (using case_id)
 app.post('/api/encounters/:case_id/products', async (req, res) => {
-  const { case_id } = req.params;
-  const product = req.body; // product details should be sent in the body of the request
-
-  try {
-    const encounter = await Encounter.findOne({ case_id });
-
-    if (!encounter) {
-      return res.status(404).json({ error: 'Encounter not found' });
+    const { case_id } = req.params;
+    const { product_id } = req.body; // Just the product_id is sent in the body
+  
+    try {
+      const encounter = await Encounter.findOne({ case_id });
+      if (!encounter) {
+        return res.status(404).json({ error: 'Encounter not found' });
+      }
+  
+      const product = await Product.findOne({ product_id });
+      if (!product) {
+        return res.status(404).json({ error: 'Product not found' });
+      }
+      console.log(product);
+      console.log(case_id);
+      // Check if product_id is already in the products_list
+      const existingProduct = encounter.products_list.find(p => p.product_id === product_id);
+      if (existingProduct) {
+        return res.status(400).json({ error: 'Product with this product_id already exists in the encounter' });
+      }
+  
+      // Add the full product details to the encounter's products_list
+      encounter.products_list.push(product);
+      await encounter.save();
+  
+      res.json({ message: 'Product added to encounter successfully', encounter });
+    } catch (error) {
+      res.status(500).json({ error: 'Failed to add product to encounter' });
     }
-
-    // Check if product_id is unique in the products_list
-    const existingProduct = encounter.products_list.find(p => p.product_id === product.product_id);
-    if (existingProduct) {
-      return res.status(400).json({ error: 'Product with this product_id already exists in the encounter' });
+  });
+  app.get('/api/encounters/:case_id/products', async (req, res) => {
+    const { case_id } = req.params;
+  
+    try {
+      // Find the encounter by case_id
+      const encounter = await Encounter.findOne({ case_id }).populate('products_list');
+      
+      if (!encounter) {
+        return res.status(404).json({ error: 'Encounter not found' });
+      }
+  
+      // `products_list` now contains the full product documents because of `.populate('products_list')`
+      res.json({ products: encounter.products_list });
+    } catch (error) {
+      res.status(500).json({ error: 'Failed to fetch products' });
     }
-
-    // Add product to the products_list array
-    encounter.products_list.push(product);
-    await encounter.save();
-
-    res.json({ message: 'Product added to encounter successfully', encounter });
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to add product to encounter' });
-  }
-});
+  });
+  
+  
 
 // Remove a product from products_list by product_id (using case_id)
 app.delete('/api/encounters/:case_id/products', async (req, res) => {
-  const { case_id } = req.params;
-  const { product_id } = req.body; // product_id should be sent in the body of the request
-
-  try {
-    const encounter = await Encounter.findOne({ case_id });
-
-    if (!encounter) {
-      return res.status(404).json({ error: 'Encounter not found' });
+    const { case_id } = req.params;
+    const { product_id } = req.body; // product_id should be sent in the body of the request
+  
+    try {
+      // Find the product by product_id
+      const product = await Product.findOne({ product_id });
+  
+      if (!product) {
+        return res.status(404).json({ error: 'Product not found' });
+      }
+  
+      // Convert the product's MongoDB ObjectId to a string
+      const productObjectId = product._id;
+  
+      // Find the encounter by case_id
+      const encounter = await Encounter.findOne({ case_id });
+  
+      if (!encounter) {
+        return res.status(404).json({ error: 'Encounter not found' });
+      }
+  
+      // Find the index of the product to remove in the encounter's products_list
+      const productIndex = encounter.products_list.findIndex(item => item.equals(productObjectId));
+  
+      if (productIndex === -1) {
+        return res.status(404).json({ error: 'Product not found in the encounter' });
+      }
+  
+      // Remove the product from the products_list array
+      encounter.products_list.splice(productIndex, 1);
+      await encounter.save();
+  
+      res.json({ message: 'Product removed from encounter successfully', encounter });
+    } catch (error) {
+      res.status(500).json({ error: 'Failed to remove product from encounter' });
     }
-
-    const productIndex = encounter.products_list.findIndex(item => item.product_id === product_id);
-
-    if (productIndex === -1) {
-      return res.status(404).json({ error: 'Product not found in the encounter' });
-    }
-
-    // Remove the product by its index
-    encounter.products_list.splice(productIndex, 1);
-    await encounter.save();
-
-    res.json({ message: 'Product removed from encounter successfully', encounter });
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to remove product from encounter' });
-  }
-});
+  });
+  
 
 // Start server
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

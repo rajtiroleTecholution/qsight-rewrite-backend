@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 
+// Define the encounter schema with references to the Product model
 const encounterSchema = new mongoose.Schema({
   mrn_number: Number,
   patient_name: String,
@@ -13,26 +14,13 @@ const encounterSchema = new mongoose.Schema({
   room: String,
   nurse: String,
   physician: String,
-  status: String, // ongoing, completed, upcoming
+  status: {
+    type: String,
+    enum: ['ongoing', 'completed', 'upcoming'], // Valid status values
+  },
   products_list: [{
-    lot_number: Number,
-    catalog_number: Number,
-    serial_number: Number,
-    product_id: {
-      type: Number,
-      unique: true, 
-    },
-    manufacturer_name: String,
-    brand_name: String,
-    expiration_date: String,
-    recorded_date: String,
-    consumption: String,
-    transaction_type: {
-      type: String,
-      enum: ['Used Patient Procedure'],  // Corrected enum values
-    },
-    site: String,
-    side: String,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Product' // Reference to the Product model
   }]
 });
 

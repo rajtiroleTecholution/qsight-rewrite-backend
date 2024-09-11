@@ -1,6 +1,13 @@
 const mongoose = require('mongoose');
 
 const productSchema = new mongoose.Schema({
+    manufacturer_name: {
+        type: String,
+      },
+      brand_name: {
+        type: String,
+      },
+      location:String,
   lot_number: {
     type: Number,
   },
@@ -12,15 +19,8 @@ const productSchema = new mongoose.Schema({
   },
   product_id: {
     type: Number,
-    unique: true,
-    required: true
   },
-  manufacturer_name: {
-    type: String,
-  },
-  brand_name: {
-    type: String,
-  },
+
   expiration_date: {
     type: String,
   },
