@@ -1,0 +1,256 @@
+// "patient_name": "John Doe/string" in this format key is "patient_name" value is john for example data any random data can be used  and type is string,
+{
+    "api_specification": {
+      "base_url": "/api/encounter",
+
+      "data_model": {
+        "patient_name": "John Doe/string",
+        "mrn_number": "1234567/number",
+        "case_id": "123456/number & unique",
+        "scheduled_at": "2024-09-18T10:00:00Z/DateTime",
+        "end_time": "2024-09-18T12:00:00Z/DateTime",
+        "status": " ["completed","ongoing","upcoming"] /Enum",
+        "room": [
+          {
+            "id": "1/number",
+            "room_name": "ICU/string"
+          }
+        ],
+        "products": "[123, 124, 125]/array of unique products reference can be unique id from product table to identify the product and get its details by that id",
+        "procedure": "colonoscopy/string",
+        "nurse": "Jane/string",
+        "physician": "Dr. Smith/string"
+      },
+      "endpoints": [
+        {
+          "operation": "List All Encounters",
+          "method": "GET",
+          "endpoint": "/api/encounter",
+          "description": "Fetches a list of all encounters.",
+          "request": {
+            "method": "GET",
+            "url_parameters": "None"
+          },
+          "response": {
+            "status": "200 OK",
+            "body": [
+              {
+               "patient_name": "John Doe/string",
+        "mrn_number": "1234567/number",
+        "case_id": "123456/number & unique",
+        "scheduled_at": "2024-09-18T10:00:00Z/DateTime",
+        "end_time": "2024-09-18T12:00:00Z/DateTime",
+        "status": " [completed,ongoing,upcoming] /Enum",
+        "room": [
+          {
+            "id": "1/number",
+            "room_name": "ICU/string"
+          },"...array of similar data"
+        ],
+        "products": "[123, 124, 125]/array of unique products reference can be unique id from product table to identify the product and get its details by that id",
+        "procedure": "colonoscopy/string",
+        "nurse": "Jane/string",
+        "physician": "Dr. Smith/string"
+              }
+            ]
+          }
+        },
+        {
+          "operation": "Create an Encounter",
+          "method": "POST",
+          "endpoint": "/api/encounter",
+          "description": "Creates a new encounter. Products array will only accept references (IDs of products).",
+          "request": {
+            "method": "POST",
+            "body": {
+              "patient_name": "John Doe",
+              "mrn_number": 123456,
+              "case_id": 2,
+              "scheduled_at": "2024-09-19T08:00:00Z",
+              "end_time": "2024-09-19T10:00:00Z",
+              "status": "upcoming",
+              "room": [
+                {
+                  "id": 2,
+                  "room_name": "Operating Room"
+                }
+              ],
+              "products": [125, 126],
+              "procedure": "Knee Replacement",
+              "nurse": "Alice Brown",
+              "physician": "Dr. Johnson"
+            }
+          },
+          "response": {
+            "status": "201 Created",
+            "body": {
+              "message": "Encounter created successfully.",
+              "encounter": {
+                "patient_name": "John Doe",
+                "mrn_number": 123456,
+                "case_id": 2,
+                "scheduled_at": "2024-09-19T08:00:00Z",
+                "end_time": "2024-09-19T10:00:00Z",
+                "status": "upcoming",
+                "room": [
+                  {
+                    "id": 2,
+                    "room_name": "Operating Room"
+                  }
+                ],
+                "products": [125, 126],
+                "procedure": "Knee Replacement",
+                "nurse": "Alice Brown",
+                "physician": "Dr. Johnson"
+              }
+            }
+          }
+        },
+        {
+          "operation": "Update an Encounter",
+          "method": "PUT",
+          "endpoint": "/api/encounter/:case_id",
+          "description": "Updates an existing encounter by its `case_id`. Products array should also only include IDs.",
+          "request": {
+            "method": "PUT",
+            "url_parameters": ":case_id",
+            "body": {
+              "patient_name": "John Doe Updated",
+              "scheduled_at": "2024-09-20T10:00:00Z",
+              "end_time": "2024-09-20T12:00:00Z",
+              "status": "completed",
+              "room": [
+                {
+                  "id": 3,
+                  "room_name": "Recovery Room"
+                }
+              ],
+              "products": [127],
+              "procedure": "Hip Replacement",
+              "nurse": "David White",
+              "physician": "Dr. Thompson"
+            }
+          },
+          "response": {
+            "status": "200 OK",
+            "body": {
+              "message": "Encounter updated successfully.",
+              "encounter": {
+                "patient_name": "John Doe Updated",
+                "mrn_number": 123456,
+                "case_id": 2,
+                "scheduled_at": "2024-09-20T10:00:00Z",
+                "end_time": "2024-09-20T12:00:00Z",
+                "status": "completed",
+                "room": [
+                  {
+                    "id": 3,
+                    "room_name": "Recovery Room"
+                  }
+                ],
+                "products": [127],
+                "procedure": "Hip Replacement",
+                "nurse": "David White",
+                "physician": "Dr. Thompson"
+              }
+            }
+          }
+        },
+        {
+          "operation": "Delete an Encounter",
+          "method": "DELETE",
+          "endpoint": "/api/encounter/:case_id",
+          "description": "Deletes an encounter by its `case_id`.",
+          "request": {
+            "method": "DELETE",
+            "url_parameters": ":case_id"
+          },
+          "response": {
+            "status": "200 OK",
+            "body": {
+              "message": "Encounter deleted successfully."
+            }
+          }
+        }
+      ],
+      "validation_rules": {
+        "patient_name": "Must be a valid string.",
+        "mrn_number": "Must be a number.",
+        "case_id": "Must be a unique number.",
+        "scheduled_at": "Must be a valid date-time string (ISO 8601 format).",
+        "end_time": "Must be a valid date-time string and must be after `scheduled_at`.",
+        "status": "Enum value: ongoing, completed, upcoming.",
+        "room": "Must be an array of objects with each object containing a valid `id` and `room_name`.",
+        "products": "Must be an array of product IDs (numbers).",
+        "procedure": "Must be a string.",
+        "nurse": "Must be a string.",
+        "physician": "Must be a string."
+      }
+    },
+    "data_schema": {
+      "model_name": "Encounter",
+      "schema": {
+        "patient_name": {
+          "type": "String",
+          "required": true
+        },
+        "mrn_number": {
+          "type": "Number",
+          "required": true
+        },
+        "case_id": {
+          "type": "Number",
+          "unique": true,
+          "required": true
+        },
+        "scheduled_at": {
+          "type": "Date",
+          "required": true
+        },
+        "end_time": {
+          "type": "Date",
+          "required": true,
+          "validate": {
+            "validator": "function(value) { return value > this.scheduled_at; }",
+            "message": "End time must be after the scheduled time."
+          }
+        },
+        "status": {
+          "type": "String",
+          "enum": ["ongoing", "completed", "upcoming"],
+          "required": true
+        },
+        "room": [
+          {
+            "id": {
+              "type": "Number",
+              "required": true
+            },
+            "room_name": {
+              "type": "String",
+              "required": true
+            }
+          }
+        ],
+        "products": [
+          {
+            "type": "Schema.Types.ObjectId",
+            "ref": "Product"
+          }
+        ],
+        "procedure": {
+          "type": "String",
+          "required": true
+        },
+        "nurse": {
+          "type": "String",
+          "required": true
+        },
+        "physician": {
+          "type": "String",
+          "required": true
+        }
+      }
+    }
+  }
+  
