@@ -6,7 +6,7 @@
         "altId3": "string | null",
         "altId4": "string | null",
         "userId": "string | null",
-        "productName": "string | null",
+        "product_name": "string | null",
         "brandName": "string | null",
         "catalogNo": "string | null",
         "description": "string | null",
@@ -39,7 +39,7 @@
                 "altId3": "456xyz",
                 "altId4": "789def",
                 "userId": "user_1",
-                "productName": "Product productName",
+                "product_name": "Product Name",
                 "brandName": "BrandX",
                 "catalogNo": "123-456",
                 "description": "Product Description",
@@ -58,6 +58,39 @@
           }
         },
         {
+          "operation": "Get Product by ProductId",
+          "method": "GET",
+          "endpoint": "/api/product/:productId",
+          "description": "Fetches a product by its `productId`.",
+          "request": {
+            "method": "GET",
+            "url_parameters": ":productId"
+          },
+          "response": {
+            "status": "200 OK",
+            "body": {
+              "productId": "123abc",
+              "altId3": "456xyz",
+              "altId4": "789def",
+              "userId": "user_1",
+              "product_name": "Product Name",
+              "brandName": "BrandX",
+              "catalogNo": "123-456",
+              "description": "Product Description",
+              "lotNo": "7890",
+              "serialNo": "ABC12345",
+              "RFID": "RFID123456",
+              "discontinuedDate": "2024-09-30",
+              "dateCreated": "2023-09-18",
+              "consumption": "used",
+              "transaction": "purchase",
+              "site": "Left Arm",
+              "side": "Anterior",
+              "quantity": 10
+            }
+          }
+        },
+        {
           "operation": "Create a Product",
           "method": "POST",
           "endpoint": "/api/product",
@@ -69,7 +102,7 @@
               "altId3": "456xyz",
               "altId4": "789def",
               "userId": "user_1",
-              "productName": "New Product",
+              "product_name": "New Product",
               "brandName": "BrandX",
               "catalogNo": "123-456",
               "description": "New Product Description",
@@ -94,7 +127,7 @@
                 "altId3": "456xyz",
                 "altId4": "789def",
                 "userId": "user_1",
-                "productName": "New Product",
+                "product_name": "New Product",
                 "brandName": "BrandX",
                 "catalogNo": "123-456",
                 "description": "New Product Description",
@@ -121,7 +154,7 @@
             "method": "PUT",
             "url_parameters": ":productId",
             "body": {
-              "productName": "Updated Product Name",
+              "product_name": "Updated Product Name",
               "brandName": "Updated Brand",
               "catalogNo": "123-789",
               "description": "Updated description",
@@ -136,7 +169,7 @@
               "message": "Product updated successfully.",
               "product": {
                 "productId": "123abc",
-                "productName": "Updated Product Name",
+                "product_name": "Updated Product Name",
                 "brandName": "Updated Brand",
                 "catalogNo": "123-789",
                 "description": "Updated description",
@@ -166,7 +199,7 @@
       ],
       "validation_rules": {
         "productId": "Must be a unique string.",
-        "productName": "Must be a string.",
+        "product_name": "Must be a string.",
         "brandName": "Must be a string.",
         "catalogNo": "Must be a string.",
         "description": "Must be a string.",
@@ -199,7 +232,7 @@
           "type": "String",
           "default": null
         },
-        "productName": {
+        "product_name": {
           "type": "String",
           "default": null
         },
@@ -253,7 +286,7 @@
         },
         "quantity": {
           "type": "Number",
-          "required": true
+          "default": 1
         }
       }
     }
