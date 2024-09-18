@@ -1,26 +1,32 @@
-// "patient_name": "John Doe/string" in this format key is "patient_name" value is john for example data any random data can be used  and type is string,
 {
     "api_specification": {
       "base_url": "/api/encounter",
-
+  
       "data_model": {
         "patient_name": "John Doe/string",
         "mrn_number": "1234567/number",
         "case_id": "123456/number & unique",
         "scheduled_at": "2024-09-18T10:00:00Z/DateTime",
         "end_time": "2024-09-18T12:00:00Z/DateTime",
-        "status": " ["completed","ongoing","upcoming"] /Enum",
+        "status": " [completed,ongoing,upcoming] /Enum",
         "room": [
           {
             "id": "1/number",
             "room_name": "ICU/string"
           }
         ],
-        "products": "[123, 124, 125]/array of unique products reference can be unique id from product table to identify the product and get its details by that id",
+        "products": [
+          {
+            "id": "123/number",
+            "site": "left_or_right/string",
+            "side": "site1_or_site2/string"
+          }
+        ],
         "procedure": "colonoscopy/string",
         "nurse": "Jane/string",
         "physician": "Dr. Smith/string"
       },
+  
       "endpoints": [
         {
           "operation": "List All Encounters",
@@ -35,22 +41,28 @@
             "status": "200 OK",
             "body": [
               {
-               "patient_name": "John Doe/string",
-        "mrn_number": "1234567/number",
-        "case_id": "123456/number & unique",
-        "scheduled_at": "2024-09-18T10:00:00Z/DateTime",
-        "end_time": "2024-09-18T12:00:00Z/DateTime",
-        "status": " [completed,ongoing,upcoming] /Enum",
-        "room": [
-          {
-            "id": "1/number",
-            "room_name": "ICU/string"
-          },"...array of similar data"
-        ],
-        "products": "[123, 124, 125]/array of unique products reference can be unique id from product table to identify the product and get its details by that id",
-        "procedure": "colonoscopy/string",
-        "nurse": "Jane/string",
-        "physician": "Dr. Smith/string"
+                "patient_name": "John Doe/string",
+                "mrn_number": "1234567/number",
+                "case_id": "123456/number & unique",
+                "scheduled_at": "2024-09-18T10:00:00Z/DateTime",
+                "end_time": "2024-09-18T12:00:00Z/DateTime",
+                "status": " [completed,ongoing,upcoming] /Enum",
+                "room": [
+                  {
+                    "id": "1/number",
+                    "room_name": "ICU/string"
+                  }
+                ],
+                "products": [
+                  {
+                    "id": "123/number",
+                    "site": "left_or_right/string",
+                    "side": "site1_or_site2/string"
+                  }
+                ],
+                "procedure": "colonoscopy/string",
+                "nurse": "Jane/string",
+                "physician": "Dr. Smith/string"
               }
             ]
           }
@@ -59,7 +71,7 @@
           "operation": "Create an Encounter",
           "method": "POST",
           "endpoint": "/api/encounter",
-          "description": "Creates a new encounter. Products array will only accept references (IDs of products).",
+          "description": "Creates a new encounter. Products array will include IDs and their site and side.",
           "request": {
             "method": "POST",
             "body": {
@@ -75,7 +87,13 @@
                   "room_name": "Operating Room"
                 }
               ],
-              "products": [125, 126],
+              "products": [
+                {
+                  "id": 125,
+                  "site": "left",
+                  "side": "site1"
+                }
+              ],
               "procedure": "Knee Replacement",
               "nurse": "Alice Brown",
               "physician": "Dr. Johnson"
@@ -98,7 +116,13 @@
                     "room_name": "Operating Room"
                   }
                 ],
-                "products": [125, 126],
+                "products": [
+                  {
+                    "id": 125,
+                    "site": "left",
+                    "side": "site1"
+                  }
+                ],
                 "procedure": "Knee Replacement",
                 "nurse": "Alice Brown",
                 "physician": "Dr. Johnson"
@@ -110,7 +134,7 @@
           "operation": "Update an Encounter",
           "method": "PUT",
           "endpoint": "/api/encounter/:case_id",
-          "description": "Updates an existing encounter by its `case_id`. Products array should also only include IDs.",
+          "description": "Updates an existing encounter by its `case_id`. Products array should also include IDs and their site and side.",
           "request": {
             "method": "PUT",
             "url_parameters": ":case_id",
@@ -125,7 +149,13 @@
                   "room_name": "Recovery Room"
                 }
               ],
-              "products": [127],
+              "products": [
+                {
+                  "id": 127,
+                  "site": "right",
+                  "side": "site2"
+                }
+              ],
               "procedure": "Hip Replacement",
               "nurse": "David White",
               "physician": "Dr. Thompson"
@@ -148,7 +178,57 @@
                     "room_name": "Recovery Room"
                   }
                 ],
-                "products": [127],
+                "products": [
+                  {
+                    "id": 127,
+                    "site": "right",
+                    "side": "site2"
+                  }
+                ],
+                "procedure": "Hip Replacement",
+                "nurse": "David White",
+                "physician": "Dr. Thompson"
+              }
+            }
+          }
+        },
+        {
+          "operation": "Update Product Site and Side",
+          "method": "PATCH",
+          "endpoint": "/api/encounter/:case_id/products/:product_id",
+          "description": "Updates the `site` and `side` for a specific product within an encounter.",
+          "request": {
+            "method": "PATCH",
+            "url_parameters": ":case_id, :product_id",
+            "body": {
+              "site": "left_or_right/string",
+              "side": "site1_or_site2/string"
+            }
+          },
+          "response": {
+            "status": "200 OK",
+            "body": {
+              "message": "Product site and side updated successfully.",
+              "encounter": {
+                "patient_name": "John Doe",
+                "mrn_number": 123456,
+                "case_id": 2,
+                "scheduled_at": "2024-09-20T10:00:00Z",
+                "end_time": "2024-09-20T12:00:00Z",
+                "status": "completed",
+                "room": [
+                  {
+                    "id": 3,
+                    "room_name": "Recovery Room"
+                  }
+                ],
+                "products": [
+                  {
+                    "id": 127,
+                    "site": "right",
+                    "side": "site2"
+                  }
+                ],
                 "procedure": "Hip Replacement",
                 "nurse": "David White",
                 "physician": "Dr. Thompson"
@@ -173,6 +253,7 @@
           }
         }
       ],
+  
       "validation_rules": {
         "patient_name": "Must be a valid string.",
         "mrn_number": "Must be a number.",
@@ -181,7 +262,7 @@
         "end_time": "Must be a valid date-time string and must be after `scheduled_at`.",
         "status": "Enum value: ongoing, completed, upcoming.",
         "room": "Must be an array of objects with each object containing a valid `id` and `room_name`.",
-        "products": "Must be an array of product IDs (numbers).",
+        "products": "Must be an array of objects with each object containing a valid `id`, `site`, and `side`.",
         "procedure": "Must be a string.",
         "nurse": "Must be a string.",
         "physician": "Must be a string."
@@ -234,8 +315,18 @@
         ],
         "products": [
           {
-            "type": "Schema.Types.ObjectId",
-            "ref": "Product"
+            "id": {
+              "type": "Number",
+              "required": true
+            },
+            "site": {
+              "type": "String",
+              "required": true
+            },
+            "side": {
+              "type": "String",
+              "required": true
+            }
           }
         ],
         "procedure": {
