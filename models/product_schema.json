@@ -1,0 +1,261 @@
+{
+    "api_specification": {
+      "base_url": "/api/product",
+      "data_model": {
+        "productId": "string (unique)",
+        "altId3": "string | null",
+        "altId4": "string | null",
+        "userId": "string | null",
+        "productName": "string | null",
+        "brandName": "string | null",
+        "catalogNo": "string | null",
+        "description": "string | null",
+        "lotNo": "string | null",
+        "serialNo": "string | null",
+        "RFID": "string | null",
+        "discontinuedDate": "string | null",
+        "dateCreated": "string | null",
+        "consumption": "string | null",
+        "transaction": "string | null",
+        "site": "string | null",
+        "side": "string | null",
+        "quantity": "number"
+      },
+      "endpoints": [
+        {
+          "operation": "List All Products",
+          "method": "GET",
+          "endpoint": "/api/product",
+          "description": "Fetches a list of all products.",
+          "request": {
+            "method": "GET",
+            "url_parameters": "None"
+          },
+          "response": {
+            "status": "200 OK",
+            "body": [
+              {
+                "productId": "123abc",
+                "altId3": "456xyz",
+                "altId4": "789def",
+                "userId": "user_1",
+                "productName": "Product productName",
+                "brandName": "BrandX",
+                "catalogNo": "123-456",
+                "description": "Product Description",
+                "lotNo": "7890",
+                "serialNo": "ABC12345",
+                "RFID": "RFID123456",
+                "discontinuedDate": "2024-09-30",
+                "dateCreated": "2023-09-18",
+                "consumption": "used",
+                "transaction": "purchase",
+                "site": "Left Arm",
+                "side": "Anterior",
+                "quantity": 10
+              }
+            ]
+          }
+        },
+        {
+          "operation": "Create a Product",
+          "method": "POST",
+          "endpoint": "/api/product",
+          "description": "Creates a new product with unique product ID.",
+          "request": {
+            "method": "POST",
+            "body": {
+              "productId": "auto-generated",
+              "altId3": "456xyz",
+              "altId4": "789def",
+              "userId": "user_1",
+              "productName": "New Product",
+              "brandName": "BrandX",
+              "catalogNo": "123-456",
+              "description": "New Product Description",
+              "lotNo": "7890",
+              "serialNo": "ABC12345",
+              "RFID": "RFID123456",
+              "discontinuedDate": "2024-12-31",
+              "dateCreated": "2024-09-18",
+              "consumption": "unused",
+              "transaction": "sale",
+              "site": "Right Leg",
+              "side": "Posterior",
+              "quantity": 5
+            }
+          },
+          "response": {
+            "status": "201 Created",
+            "body": {
+              "message": "Product created successfully.",
+              "product": {
+                "productId": "auto-generated",
+                "altId3": "456xyz",
+                "altId4": "789def",
+                "userId": "user_1",
+                "productName": "New Product",
+                "brandName": "BrandX",
+                "catalogNo": "123-456",
+                "description": "New Product Description",
+                "lotNo": "7890",
+                "serialNo": "ABC12345",
+                "RFID": "RFID123456",
+                "discontinuedDate": "2024-12-31",
+                "dateCreated": "2024-09-18",
+                "consumption": "unused",
+                "transaction": "sale",
+                "site": "Right Leg",
+                "side": "Posterior",
+                "quantity": 5
+              }
+            }
+          }
+        },
+        {
+          "operation": "Update a Product",
+          "method": "PUT",
+          "endpoint": "/api/product/:productId",
+          "description": "Updates an existing product.",
+          "request": {
+            "method": "PUT",
+            "url_parameters": ":productId",
+            "body": {
+              "productName": "Updated Product Name",
+              "brandName": "Updated Brand",
+              "catalogNo": "123-789",
+              "description": "Updated description",
+              "site": "Left Hand",
+              "side": "Anterior",
+              "quantity": 20
+            }
+          },
+          "response": {
+            "status": "200 OK",
+            "body": {
+              "message": "Product updated successfully.",
+              "product": {
+                "productId": "123abc",
+                "productName": "Updated Product Name",
+                "brandName": "Updated Brand",
+                "catalogNo": "123-789",
+                "description": "Updated description",
+                "site": "Left Hand",
+                "side": "Anterior",
+                "quantity": 20
+              }
+            }
+          }
+        },
+        {
+          "operation": "Delete a Product",
+          "method": "DELETE",
+          "endpoint": "/api/product/:productId",
+          "description": "Deletes a product by its `productId`.",
+          "request": {
+            "method": "DELETE",
+            "url_parameters": ":productId"
+          },
+          "response": {
+            "status": "200 OK",
+            "body": {
+              "message": "Product deleted successfully."
+            }
+          }
+        }
+      ],
+      "validation_rules": {
+        "productId": "Must be a unique string.",
+        "productName": "Must be a string.",
+        "brandName": "Must be a string.",
+        "catalogNo": "Must be a string.",
+        "description": "Must be a string.",
+        "lotNo": "Must be a string.",
+        "serialNo": "Must be a string.",
+        "RFID": "Must be a string.",
+        "discontinuedDate": "Must be a valid date string.",
+        "site": "Must be a string indicating the location of product usage (e.g., 'Left Arm').",
+        "side": "Must be a string indicating the anatomical side (e.g., 'Anterior').",
+        "quantity": "Must be a number."
+      }
+    },
+    "data_schema": {
+      "model_name": "Product",
+      "schema": {
+        "productId": {
+          "type": "String",
+          "unique": true,
+          "required": true
+        },
+        "altId3": {
+          "type": "String",
+          "default": null
+        },
+        "altId4": {
+          "type": "String",
+          "default": null
+        },
+        "userId": {
+          "type": "String",
+          "default": null
+        },
+        "productName": {
+          "type": "String",
+          "default": null
+        },
+        "brandName": {
+          "type": "String",
+          "default": null
+        },
+        "catalogNo": {
+          "type": "String",
+          "default": null
+        },
+        "description": {
+          "type": "String",
+          "default": null
+        },
+        "lotNo": {
+          "type": "String",
+          "default": null
+        },
+        "serialNo": {
+          "type": "String",
+          "default": null
+        },
+        "RFID": {
+          "type": "String",
+          "default": null
+        },
+        "discontinuedDate": {
+          "type": "Date",
+          "default": null
+        },
+        "dateCreated": {
+          "type": "Date",
+          "default": Date.now
+        },
+        "consumption": {
+          "type": "String",
+          "default": null
+        },
+        "transaction": {
+          "type": "String",
+          "default": null
+        },
+        "site": {
+          "type": "String",
+          "default": null
+        },
+        "side": {
+          "type": "String",
+          "default": null
+        },
+        "quantity": {
+          "type": "Number",
+          "required": true
+        }
+      }
+    }
+  }
+  
