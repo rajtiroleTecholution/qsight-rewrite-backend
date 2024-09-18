@@ -6,20 +6,26 @@
         "altId3": "string | null",
         "altId4": "string | null",
         "userId": "string | null",
-        "product_name": "string | null",
+        "manufacture_name": "string | null",
         "brandName": "string | null",
         "catalogNo": "string | null",
         "description": "string | null",
         "lotNo": "string | null",
         "serialNo": "string | null",
         "RFID": "string | null",
-        "discontinuedDate": "string | null",
+        "expiryDate": "string | null",
         "dateCreated": "string | null",
         "consumption": "string | null",
-        "transaction": "string | null",
-        "site": "string | null",
-        "side": "string | null",
-        "quantity": "number"
+        "transaction": "Enum[Used, Patient Procedure]",
+        "quantity": "number",
+        "price": "number",
+        "consigned": "string",
+        "loaned": "string",
+        "usedTime": "DateTime",
+        "expirydate": "DateTime",
+        "UPN": "string",
+        "img_src": "string",
+        "ifu_link": "string"
       },
       "endpoints": [
         {
@@ -39,19 +45,17 @@
                 "altId3": "456xyz",
                 "altId4": "789def",
                 "userId": "user_1",
-                "product_name": "Product Name",
+                "manufacture_name": "Product Name",
                 "brandName": "BrandX",
                 "catalogNo": "123-456",
                 "description": "Product Description",
                 "lotNo": "7890",
                 "serialNo": "ABC12345",
                 "RFID": "RFID123456",
-                "discontinuedDate": "2024-09-30",
+                "expiryDate": "2024-09-30",
                 "dateCreated": "2023-09-18",
                 "consumption": "used",
                 "transaction": "purchase",
-                "site": "Left Arm",
-                "side": "Anterior",
                 "quantity": 10
               }
             ]
@@ -73,19 +77,17 @@
               "altId3": "456xyz",
               "altId4": "789def",
               "userId": "user_1",
-              "product_name": "Product Name",
+              "manufacture_name": "Product Name",
               "brandName": "BrandX",
               "catalogNo": "123-456",
               "description": "Product Description",
               "lotNo": "7890",
               "serialNo": "ABC12345",
               "RFID": "RFID123456",
-              "discontinuedDate": "2024-09-30",
+              "expiryDate": "2024-09-30",
               "dateCreated": "2023-09-18",
               "consumption": "used",
               "transaction": "purchase",
-              "site": "Left Arm",
-              "side": "Anterior",
               "quantity": 10
             }
           }
@@ -102,19 +104,17 @@
               "altId3": "456xyz",
               "altId4": "789def",
               "userId": "user_1",
-              "product_name": "New Product",
+              "manufacture_name": "New Product",
               "brandName": "BrandX",
               "catalogNo": "123-456",
               "description": "New Product Description",
               "lotNo": "7890",
               "serialNo": "ABC12345",
               "RFID": "RFID123456",
-              "discontinuedDate": "2024-12-31",
+              "expiryDate": "2024-12-31",
               "dateCreated": "2024-09-18",
               "consumption": "unused",
               "transaction": "sale",
-              "site": "Right Leg",
-              "side": "Posterior",
               "quantity": 5
             }
           },
@@ -127,19 +127,17 @@
                 "altId3": "456xyz",
                 "altId4": "789def",
                 "userId": "user_1",
-                "product_name": "New Product",
+                "manufacture_name": "New Product",
                 "brandName": "BrandX",
                 "catalogNo": "123-456",
                 "description": "New Product Description",
                 "lotNo": "7890",
                 "serialNo": "ABC12345",
                 "RFID": "RFID123456",
-                "discontinuedDate": "2024-12-31",
+                "expiryDate": "2024-12-31",
                 "dateCreated": "2024-09-18",
                 "consumption": "unused",
                 "transaction": "sale",
-                "site": "Right Leg",
-                "side": "Posterior",
                 "quantity": 5
               }
             }
@@ -154,12 +152,10 @@
             "method": "PUT",
             "url_parameters": ":productId",
             "body": {
-              "product_name": "Updated Product Name",
+              "manufacture_name": "Updated Product Name",
               "brandName": "Updated Brand",
               "catalogNo": "123-789",
               "description": "Updated description",
-              "site": "Left Hand",
-              "side": "Anterior",
               "quantity": 20
             }
           },
@@ -169,12 +165,10 @@
               "message": "Product updated successfully.",
               "product": {
                 "productId": "123abc",
-                "product_name": "Updated Product Name",
+                "manufacture_name": "Updated Product Name",
                 "brandName": "Updated Brand",
                 "catalogNo": "123-789",
                 "description": "Updated description",
-                "site": "Left Hand",
-                "side": "Anterior",
                 "quantity": 20
               }
             }
@@ -199,16 +193,14 @@
       ],
       "validation_rules": {
         "productId": "Must be a unique string.",
-        "product_name": "Must be a string.",
+        "manufacture_name": "Must be a string.",
         "brandName": "Must be a string.",
         "catalogNo": "Must be a string.",
         "description": "Must be a string.",
         "lotNo": "Must be a string.",
         "serialNo": "Must be a string.",
         "RFID": "Must be a string.",
-        "discontinuedDate": "Must be a valid date string.",
-        "site": "Must be a string indicating the location of product usage (e.g., 'Left Arm').",
-        "side": "Must be a string indicating the anatomical side (e.g., 'Anterior').",
+        "expiryDate": "Must be a valid date string.",
         "quantity": "Must be a number."
       }
     },
@@ -232,7 +224,7 @@
           "type": "String",
           "default": null
         },
-        "product_name": {
+        "manufacture_name": {
           "type": "String",
           "default": null
         },
@@ -260,27 +252,19 @@
           "type": "String",
           "default": null
         },
-        "discontinuedDate": {
+        "expiryDate": {
           "type": "Date",
           "default": null
         },
         "dateCreated": {
           "type": "Date",
-          "default": Date.now
+          "default": "Date.now"
         },
         "consumption": {
           "type": "String",
           "default": null
         },
         "transaction": {
-          "type": "String",
-          "default": null
-        },
-        "site": {
-          "type": "String",
-          "default": null
-        },
-        "side": {
           "type": "String",
           "default": null
         },
