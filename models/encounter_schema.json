@@ -1,38 +1,35 @@
 {
     "api_specification": {
       "base_url": "/api/encounter",
-  
       "data_model": {
-        "patient_name": "John Doe/string",
-        "mrn_number": "1234567/number",
-        "case_id": "123456/number & unique",
-        "scheduled_at": "2024-09-18T10:00:00Z/DateTime",
-        "end_time": "2024-09-18T12:00:00Z/DateTime",
-        "status": " [completed,ongoing,upcoming] /Enum",
+        "patient_name": "string (required)",
+        "mrn_number": "number (required)",
+        "case_id": "number (unique, auto generate,required)",
+        "procedure": "string (required)",
+        "created_at": "timestamp",
+        "updated_at": "timestamp",
+        "scheduled_at": "timestamp (required)",
+        "end_time": {
+          "type": "timestamp (required)",
+          "validation": "End time must be after scheduled_at"
+        },
+        "status": "enum[ongoing, completed, upcoming] (required)",
         "room": [
           {
-            "id": "1/number",
-            "room_name": "ICU/string"
+            "id": "number (required)",
+            "room_name": "string (required)"
           }
         ],
-        "products": [
-          {
-            "id": "123/number",
-            "site": "left_or_right/string",
-            "side": "site1_or_site2/string"
-          }
-        ],
-        "procedure": "colonoscopy/string",
-        "nurse": "Jane/string",
-        "physician": "Dr. Smith/string"
+        "nurse": "string (required)",
+        "physician": "string (required)",
+        "products": "array of product schema"
       },
-  
       "endpoints": [
         {
           "operation": "List All Encounters",
           "method": "GET",
           "endpoint": "/api/encounter",
-          "description": "Fetches a list of all encounters.",
+          "description": "Fetches a list of all patient encounters.",
           "request": {
             "method": "GET",
             "url_parameters": "None"
@@ -41,62 +38,84 @@
             "status": "200 OK",
             "body": [
               {
-                "patient_name": "John Doe/string",
-                "mrn_number": "1234567/number",
-                "case_id": "123456/number & unique",
-                "scheduled_at": "2024-09-18T10:00:00Z/DateTime",
-                "end_time": "2024-09-18T12:00:00Z/DateTime",
-                "status": " [completed,ongoing,upcoming] /Enum",
+                "patient_name": "John Doe",
+                "mrn_number": 123456,
+                "case_id": 1,
+                "procedure": "Surgery",
+                "created_at": "2024-09-01T08:30:00Z",
+                "updated_at": "2024-09-01T09:30:00Z",
+                "scheduled_at": "2024-09-01T10:00:00Z",
+                "end_time": "2024-09-01T12:00:00Z",
+                "status": "completed",
                 "room": [
                   {
-                    "id": "1/number",
-                    "room_name": "ICU/string"
+                    "id": 1,
+                    "room_name": "Operating Room A"
                   }
                 ],
-                "products": [
-                  {
-                    "id": "123/number",
-                    "site": "left_or_right/string",
-                    "side": "site1_or_site2/string"
-                  }
-                ],
-                "procedure": "colonoscopy/string",
-                "nurse": "Jane/string",
-                "physician": "Dr. Smith/string"
+                "nurse": "Nurse Jane",
+                "physician": "Dr. Smith",
+                "products": []
               }
             ]
           }
         },
         {
-          "operation": "Create an Encounter",
-          "method": "POST",
-          "endpoint": "/api/encounter",
-          "description": "Creates a new encounter. Products array will include IDs and their site and side.",
+          "operation": "Get Encounter by Case ID",
+          "method": "GET",
+          "endpoint": "/api/encounter/:case_id",
+          "description": "Fetches a specific patient encounter by case ID.",
           "request": {
-            "method": "POST",
+            "method": "GET",
+            "url_parameters": ":case_id"
+          },
+          "response": {
+            "status": "200 OK",
             "body": {
               "patient_name": "John Doe",
               "mrn_number": 123456,
-              "case_id": 2,
-              "scheduled_at": "2024-09-19T08:00:00Z",
-              "end_time": "2024-09-19T10:00:00Z",
+              "case_id": 1,
+              "procedure": "Surgery",
+              "created_at": "2024-09-01T08:30:00Z",
+              "updated_at": "2024-09-01T09:30:00Z",
+              "scheduled_at": "2024-09-01T10:00:00Z",
+              "end_time": "2024-09-01T12:00:00Z",
+              "status": "completed",
+              "room": [
+                {
+                  "id": 1,
+                  "room_name": "Operating Room A"
+                }
+              ],
+              "nurse": "Nurse Jane",
+              "physician": "Dr. Smith",
+              "products": []
+            }
+          }
+        },
+        {
+          "operation": "Create a New Encounter",
+          "method": "POST",
+          "endpoint": "/api/encounter",
+          "description": "Creates a new patient encounter.",
+          "request": {
+            "method": "POST",
+            "body": {
+              "patient_name": "string",
+              "mrn_number": "number",
+              "procedure": "string",
+              "scheduled_at": "timestamp",
+              "end_time": "timestamp",
               "status": "upcoming",
               "room": [
                 {
-                  "id": 2,
-                  "room_name": "Operating Room"
+                  "id": "number",
+                  "room_name": "string"
                 }
               ],
-              "products": [
-                {
-                  "id": 125,
-                  "site": "left",
-                  "side": "site1"
-                }
-              ],
-              "procedure": "Knee Replacement",
-              "nurse": "Alice Brown",
-              "physician": "Dr. Johnson"
+              "nurse": "string",
+              "physician": "string",
+              "products": []
             }
           },
           "response": {
@@ -106,26 +125,20 @@
               "encounter": {
                 "patient_name": "John Doe",
                 "mrn_number": 123456,
-                "case_id": 2,
-                "scheduled_at": "2024-09-19T08:00:00Z",
-                "end_time": "2024-09-19T10:00:00Z",
-                "status": "upcoming",
+                "case_id": 1,
+                "procedure": "Surgery",
+                "scheduled_at": "2024-09-01T10:00:00Z",
+                "end_time": "2024-09-01T12:00:00Z",
+                "status": "ongoing",
                 "room": [
                   {
-                    "id": 2,
-                    "room_name": "Operating Room"
+                    "id": 1,
+                    "room_name": "Operating Room A"
                   }
                 ],
-                "products": [
-                  {
-                    "id": 125,
-                    "site": "left",
-                    "side": "site1"
-                  }
-                ],
-                "procedure": "Knee Replacement",
-                "nurse": "Alice Brown",
-                "physician": "Dr. Johnson"
+                "nurse": "Nurse Jane",
+                "physician": "Dr. Smith",
+                "products": []
               }
             }
           }
@@ -134,31 +147,24 @@
           "operation": "Update an Encounter",
           "method": "PUT",
           "endpoint": "/api/encounter/:case_id",
-          "description": "Updates an existing encounter by its `case_id`. Products array should also include IDs and their site and side.",
+          "description": "Updates an existing patient encounter.",
           "request": {
             "method": "PUT",
             "url_parameters": ":case_id",
             "body": {
-              "patient_name": "John Doe Updated",
-              "scheduled_at": "2024-09-20T10:00:00Z",
-              "end_time": "2024-09-20T12:00:00Z",
-              "status": "completed",
+              "procedure": "string",
+              "scheduled_at": "timestamp",
+              "end_time": "timestamp",
+              "status": "enum[ongoing, completed, upcoming]",
               "room": [
                 {
-                  "id": 3,
-                  "room_name": "Recovery Room"
+                  "id": "number",
+                  "room_name": "string"
                 }
               ],
-              "products": [
-                {
-                  "id": 127,
-                  "site": "right",
-                  "side": "site2"
-                }
-              ],
-              "procedure": "Hip Replacement",
-              "nurse": "David White",
-              "physician": "Dr. Thompson"
+              "nurse": "string",
+              "physician": "string",
+              "products": "array"
             }
           },
           "response": {
@@ -166,72 +172,20 @@
             "body": {
               "message": "Encounter updated successfully.",
               "encounter": {
-                "patient_name": "John Doe Updated",
-                "mrn_number": 123456,
-                "case_id": 2,
-                "scheduled_at": "2024-09-20T10:00:00Z",
-                "end_time": "2024-09-20T12:00:00Z",
-                "status": "completed",
+                "case_id": 1,
+                "procedure": "Updated Surgery",
+                "scheduled_at": "2024-09-01T10:00:00Z",
+                "end_time": "2024-09-01T12:30:00Z",
+                "status": "ongoing",
                 "room": [
                   {
-                    "id": 3,
-                    "room_name": "Recovery Room"
+                    "id": 1,
+                    "room_name": "Operating Room B"
                   }
                 ],
-                "products": [
-                  {
-                    "id": 127,
-                    "site": "right",
-                    "side": "site2"
-                  }
-                ],
-                "procedure": "Hip Replacement",
-                "nurse": "David White",
-                "physician": "Dr. Thompson"
-              }
-            }
-          }
-        },
-        {
-          "operation": "Update Product Site and Side",
-          "method": "PATCH",
-          "endpoint": "/api/encounter/:case_id/products/:product_id",
-          "description": "Updates the `site` and `side` for a specific product within an encounter.",
-          "request": {
-            "method": "PATCH",
-            "url_parameters": ":case_id, :product_id",
-            "body": {
-              "site": "left_or_right/string",
-              "side": "site1_or_site2/string"
-            }
-          },
-          "response": {
-            "status": "200 OK",
-            "body": {
-              "message": "Product site and side updated successfully.",
-              "encounter": {
-                "patient_name": "John Doe",
-                "mrn_number": 123456,
-                "case_id": 2,
-                "scheduled_at": "2024-09-20T10:00:00Z",
-                "end_time": "2024-09-20T12:00:00Z",
-                "status": "completed",
-                "room": [
-                  {
-                    "id": 3,
-                    "room_name": "Recovery Room"
-                  }
-                ],
-                "products": [
-                  {
-                    "id": 127,
-                    "site": "right",
-                    "side": "site2"
-                  }
-                ],
-                "procedure": "Hip Replacement",
-                "nurse": "David White",
-                "physician": "Dr. Thompson"
+                "nurse": "Nurse Jane",
+                "physician": "Dr. Smith",
+                "products": []
               }
             }
           }
@@ -240,7 +194,7 @@
           "operation": "Delete an Encounter",
           "method": "DELETE",
           "endpoint": "/api/encounter/:case_id",
-          "description": "Deletes an encounter by its `case_id`.",
+          "description": "Deletes a patient encounter by case ID.",
           "request": {
             "method": "DELETE",
             "url_parameters": ":case_id"
@@ -253,19 +207,18 @@
           }
         }
       ],
-  
       "validation_rules": {
-        "patient_name": "Must be a valid string.",
-        "mrn_number": "Must be a number.",
-        "case_id": "Must be a unique number.",
-        "scheduled_at": "Must be a valid date-time string (ISO 8601 format).",
-        "end_time": "Must be a valid date-time string and must be after `scheduled_at`.",
-        "status": "Enum value: ongoing, completed, upcoming.",
-        "room": "Must be an array of objects with each object containing a valid `id` and `room_name`.",
-        "products": "Must be an array of objects with each object containing a valid `id`, `site`, and `side`.",
-        "procedure": "Must be a string.",
-        "nurse": "Must be a string.",
-        "physician": "Must be a string."
+        "patient_name": "Must be a string and required.",
+        "mrn_number": "Must be a number and required.",
+        "case_id": "Must be a unique number and required.",
+        "procedure": "Must be a string and required.",
+        "scheduled_at": "Must be a valid timestamp and required.",
+        "end_time": "Must be a valid timestamp and must be after scheduled_at.",
+        "status": "Must be one of ['ongoing', 'completed', 'upcoming'].",
+        "room": "Must be an array of room objects with required id and room_name fields.",
+        "nurse": "Must be a string and required.",
+        "physician": "Must be a string and required.",
+        "products": "Must be an array of product schema."
       }
     },
     "data_schema": {
@@ -284,12 +237,24 @@
           "unique": true,
           "required": true
         },
+        "procedure": {
+          "type": "String",
+          "required": true
+        },
+        "created_at": {
+          "type": "Timestamp",
+          "default": "Date.now"
+        },
+        "updated_at": {
+          "type": "Timestamp",
+          "default": "Date.now"
+        },
         "scheduled_at": {
-          "type": "Date",
+          "type": "Timestamp",
           "required": true
         },
         "end_time": {
-          "type": "Date",
+          "type": "Timestamp",
           "required": true,
           "validate": {
             "validator": "function(value) { return value > this.scheduled_at; }",
@@ -313,26 +278,6 @@
             }
           }
         ],
-        "products": [
-          {
-            "id": {
-              "type": "Number",
-              "required": true
-            },
-            "site": {
-              "type": "String",
-              "required": true
-            },
-            "side": {
-              "type": "String",
-              "required": true
-            }
-          }
-        ],
-        "procedure": {
-          "type": "String",
-          "required": true
-        },
         "nurse": {
           "type": "String",
           "required": true
@@ -340,6 +285,12 @@
         "physician": {
           "type": "String",
           "required": true
+        },
+        "products": {
+          "type": "Array",
+          "items": {
+            "$ref": "ProductSchema"
+          }
         }
       }
     }
