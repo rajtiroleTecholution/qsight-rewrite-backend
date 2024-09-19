@@ -334,13 +334,12 @@
             {
                 "operation": "Update Product in Encounter",
                 "method": "PATCH",
-                "endpoint": "/api/encounter/products",
+                "endpoint": "/api/encounter:case_id/products",
                 "description": "Updates a product in the encounter's product array only update those keys or data which are being sent by user if user want to update expiry of particular variant they provide case id in which products are product id variant id.",
                 "request": {
                     "method": "PATCH",
                     "body": {
                         "product_id": "number (required)",
-                        "case_id": "number (required)",
                         "variant_id": "number (required)",
                         "product_data": {"description": "updated data"}
                     }
@@ -399,39 +398,8 @@
                 "request": {
                     "method": "POST",
                     "body": {
-                            "productId": "string",
-                            "manufacture_name": "string",
-                            "brandName": "string",
-                            "altId3": "string",
-                            "altId4": "string",
-                            "userId": "string",
-                            "variant": [
-                              {
-                                "id": "number",
-                                "catalogNo": "string",
-                                "description": "string",
-                                "lotNo": "string",
-                                "serialNo": "string",
-                                "RFID": "string",
-                                "expiryDate": "date",
-                                "recorded_at": "timeStamp",
-                                "used_at": "timestamp",
-                                "created_at": "timestamp",
-                                "updated_at": "timestamp",
-                                "consumption": "string",
-                                "consigned": "string",
-                                "upn_number": "number",
-                                "ifu_link": "string",
-                                "img_src": "string",
-                                "loaned": "string",
-                                "transaction_type": "{id:number,value:string}",
-                                "site": "{id:number,value:string}",
-                                "side": "{id:number,value:string}",
-                                "type": "{id:number,value:string}",
-                                "quantity": "number",
-                                "price": "number"
-                              }
-                            ]
+                        "product_id": "number (required)",
+                        "variant_id": "number (required)"
                     }
                 },
                 "response": {
@@ -454,8 +422,7 @@
                     "method": "DELETE",
                     "body": {
                         "product_id": "number (required)",
-                        "variant_id": "number (required)",
-                        "case_id": "number (required)"
+                        "variant_id": "number (required)"
                     }
                 },
                 "response": {
