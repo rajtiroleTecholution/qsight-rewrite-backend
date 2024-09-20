@@ -31,7 +31,7 @@
                 }]
             },
             "products": [{
-                "productId": "string (unique, required)",
+                "productId": "string (unique, required)",-->available
                 "manufacture_name": "string (optional)",
                 "brandName": "string (optional)",
                 "altId3": "string (optional)",
@@ -42,8 +42,8 @@
                     "id": "number (unique, required)",
                     "catalogNo": "string",
                     "description": "string (optional)",
-                    "lotNo": "string",
-                    "serialNo": "string",
+                    "lotNo": "string",-->lotNumber
+                    "serialNo": "string",-->serialNumber
                     "RFID": "string",
                     "expiryDate": "date (optional)",
                     "recorded_at": "timeStamp",
@@ -51,17 +51,17 @@
                     "created_at": "timestamp",
                     "updated_at": "timestamp",
                     "consumption": "string",
-                    "consigned": "string",
+                    "consigned": "string",-->consigned
                     "upn_number": "number",
                     "ifu_link": "string",
                     "img_src": "string",
-                    "loaned": "string",
+                    "loaned": "string",-->loaned
                     "transaction_type": "enum[{id:number,value:string}]",
                     "site": "enum[{id:number,value:string}] ",
                     "side": "enum[{id:number,value:string}] ",
                     "type": "enum[{id:number,value:string}] ",
-                    "quantity": "number",
-                    "price": "number"
+                    "quantity": "number",-->quantity
+                    "price": "number"-->unitPrice
                   }
                 ]
               }]

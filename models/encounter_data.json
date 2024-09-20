@@ -1,0 +1,125 @@
+"data_model": {
+    "patient_name": "string (required)",-->encounterName
+    "mrn_number": "number (required)",
+    "case_id": "number (unique, auto generate, required)",-->patientId
+   
+    "procedure": "string (required)",
+    "created_at": "timestamp",-->date
+    "updated_at": "timestamp",
+    "scheduled_at": "timestamp",-->dateStarted||timeStarted
+    "end_time": {
+        "type": "timestamp",-->dateCompleted||timeCompleted
+        "validation": "End time must be after scheduled_at"
+    },
+    "status": "enum[ongoing, completed, upcoming] (required)",
+    "room": [
+        {
+            "id": "number (required)",-->procedureRoomId
+            "room_name": "string (required)",-->procedureRoomName
+            "room_number": "string (required)",
+        }
+    ],
+    "clinical_team": {
+        "nurse": [{
+            "id": "number",
+            "name": "string"
+        }],
+        "physician":[ {
+            "id": "number",
+            "name": "string"
+        }]
+    },
+    "products": "product data"
+},
+"endpoints": [
+    {
+        "operation": "List All Encounters",--available
+        "method": "GET",
+        "endpoint": "/api/encounter",
+        
+    },
+    {
+        "operation": "Get Encounter by Case ID",---list by encounter name
+        "method": "GET",
+        "endpoint": "/api/encounter/:case_id",
+        "description": "Fetches a specific patient encounter by case ID.",
+        
+    },
+    {
+        "operation": "Update an Encounter",--missing only status update available
+        "method": "PATCH",
+        "endpoint": "/api/encounter/:case_id",
+        "description": "Updates an existing patient encounter only update data which is given in body keep other data as it was before only update data which is being sent by user.",
+     
+    },
+    {
+        "operation": "Delete an Encounter",--available
+        "method": "DELETE",
+        "endpoint": "/api/encounter/:case_id",
+        "description": "Deletes a patient encounter by case ID.",
+        "request": {
+            "method": "DELETE",
+            "url_parameters": ":case_id"
+        },
+        "response": {
+            "status": "200 OK",
+            "body": {
+                "message": "Encounter deleted successfully."
+            }
+        }
+    },
+    {
+        "operation": "Update Product in Encounter",--missing we can use add product to send whole data in one api
+        "method": "PATCH",
+        "endpoint": "/api/encounter:case_id/products",
+        "description": "Updates a product in the encounter's product array only update those keys or data which are being sent by user if user want to update expiry of particular variant they provide case id in which products are product id variant id.",
+        "request": {
+            "method": "PATCH",
+            "body": {
+                "product_id": "number (required)",
+                "variant_id": "number (required)",
+                "product_data": {"description": "updated data"}
+            }
+        },
+       
+    },
+   
+    {
+        "operation": "Add Product in Encounter", --available but have to send whole data
+        "method": "POST",
+        "endpoint": "/api/encounter:case_id/products",
+        "description": "Add the product to encounter's product array",
+        "request": {
+            "method": "POST",
+            "body": {
+                "product_id": "number (required)",
+                "variant_id": "number (required)"--sending whole data now
+            }
+        },
+       
+    },
+    {
+        "operation": "remove Product from Encounter",--missing
+        "method": "DELETE",
+        "endpoint": "/api/encounter:case_id/products",
+        "description": "delete the product with the product id and case id.",
+        "request": {
+            "method": "DELETE",
+            "body": {
+                "product_id": "number (required)",
+                "variant_id": "number (required)"
+            }
+        },
+        "response": {
+            "status": "200 OK",
+            "body": {
+                "message": "Product updated successfully in encounter.",
+                "encounter": {
+                    "case_id": 1,
+                    "products": "removed product and updated encounter data sent"
+                }
+            }
+        }
+    }
+    //api for confirm product log needed
+],

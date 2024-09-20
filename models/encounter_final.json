@@ -1,0 +1,49 @@
+[
+    {
+        "encounterName": "string",
+        "encounterId": 0,
+      
+        "hospitalEncounterCode": "string",
+        "hospitalId": 0,
+        "departmentId": 0,        
+      
+        "patientDetails":{
+            
+            
+
+        },
+        "clinicianDetails":{
+
+        },
+
+     "encounterProductsUsed":{
+
+     },
+
+     "missingData":{
+        "mrnNumber": "number (required)",
+        "procedure": "string (required)",
+        "updatedAt": "timestamp",
+        "status": "enum[ongoing, completed, upcoming] (required)",
+        "room": [
+            {
+                "id": "number (required)",-->procedureRoomId
+                "roomName": "string (required)",-->procedureRoomName
+                "roomNumber": "string (required)"
+            }
+        ],
+        "clinicalTeam": {
+            "nurse": [{
+                "id": "number",
+                "name": "string"
+            }],
+            "physician":[ {
+                "id": "number",
+                "name": "string"
+            }]
+        },
+        "products": "product data--Array of product schema"
+     }
+
+    }
+  ]

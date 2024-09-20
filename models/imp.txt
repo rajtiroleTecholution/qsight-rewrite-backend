@@ -1,0 +1,37 @@
+Get allEncounter
+Get Encounter by encounterId
+Update Encounter details by encounterId
+Get Product by encounterId
+Add/Delete/update product by encounterId
+
+
+[
+    {
+        4
+
+    },
+    {
+        3
+
+    },
+    {
+
+    }
+]
+
+
+[
+    {
+
+        varinets:[{
+            varientId:1,
+            count:4
+        },
+        {
+            varientId:2,
+            count:4
+        }]
+
+
+    }
+]

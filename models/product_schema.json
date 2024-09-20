@@ -2,37 +2,41 @@
     "api_specification": {
       "base_url": "/api/product",
       "data_model": {
-        "productId": "string (unique, required)",
+        "productId": "string (unique, required)",--productId
         "manufacture_name": "string (optional)",
-        "brandName": "string (optional)",
-        "altId3": "string (optional)",
-        "altId4": "string (optional)",
-        "userId": "string (optional)",
+        "brandName": "string (optional)",--productName
+        "productName": "string (optional)",
+        "altId3": "string (optional)",--altId3
+        "altId4": "string (optional)",--altId3
+        "userId": "string (optional)",--userId
         "variant": [
           {
-            "id": "number (unique, required)",
-            "catalogNo": "string",
-            "description": "string (optional)",
+            "id": "number (unique, required)",--id
+            "catalogNo": "string",--catalogNo
+            "description": "string (optional)",--description
             "lotNo": "string",
             "serialNo": "string",
             "RFID": "string",
             "expiryDate": "date (optional)",
+            "expiry_status": "date (optional)",--newly added
             "recorded_at": "timeStamp",
-            "used_at": "timestamp",
-            "created_at": "timestamp",
-            "updated_at": "timestamp",
+            "used_data_time": "timestamp",--key updated
+            "created_at": "timestamp",-->creationTime
+            "updated_at": "timestamp",-->updated
             "consumption": "string",
             "consigned": "string",
             "upn_number": "number",
+            "ref_number": "number",--newly added
             "ifu_link": "string",
             "img_src": "string",
             "loaned": "string",
             "transaction_type": "enum[{id:number,value:string}]",
             "site": "enum[{id:number,value:string}]",
-            "side": "enum[{id:number,value:string}] ",
-            "type": "enum[{id:number,value:string}] ",
+            "side": "enum[{id:number,value:string}]",
+            "type": "enum[{id:number,value:string}]",
             "quantity": "number",
-            "price": "number"
+            "price": "number"-->listPrice,
+            "location": {"id","string"}-->newly added
           }
         ]
       },
@@ -45,42 +49,7 @@
           "request": {
             "method": "GET"
           },
-          "response": {
-            "status": "200 OK",
-            "body": {
-              "productId": "12345",
-              "manufacture_name": "XYZ Corp",
-              "brandName": "BrandX",
-              "altId3": "AltId3",
-              "altId4": "AltId4",
-              "userId": "User123",
-              "variant": {
-                "id": 1,
-                "catalogNo": "ABC123",
-                "description": "Product description",
-                "lotNo": "LOT123",
-                "serialNo": "SN12345",
-                "RFID": "RFID12345",
-                "expiryDate": "2025-12-31",
-                "recorded_at": "2024-09-01T08:30:00Z",
-                "used_at": null,
-                "created_at": "2024-09-01T08:00:00Z",
-                "updated_at": "2024-09-01T09:00:00Z",
-                "consumption": "Consumed",
-                "consigned": "No",
-                "upn_number": 54321,
-                "ifu_link": "http://example.com/ifu.pdf",
-                "img_src": "http://example.com/image.jpg",
-                "loaned": "No",
-                "transaction_type": "Used, Patient Procedure",
-                "site": "Achilles Tendon",
-                "side": "Arm",
-                "type": "Implant",
-                "quantity": 100,
-                "price": 500.00
-              }
-            }
-          }
+        
         },
         {
           "operation": "Get Product by Product ID and Variant ID",
@@ -95,43 +64,6 @@
                 "variant_id": "number (required)",
                 "product_data": {"description": "updated data"}
             }
-          },
-          "response": {
-            "status": "200 OK",
-            "body": {
-              "productId": "12345",
-              "manufacture_name": "XYZ Corp",
-              "brandName": "BrandX",
-              "altId3": "AltId3",
-              "altId4": "AltId4",
-              "userId": "User123",
-              "variant": {
-                "id": 1,
-                "catalogNo": "ABC123",
-                "description": "Product description",
-                "lotNo": "LOT123",
-                "serialNo": "SN12345",
-                "RFID": "RFID12345",
-                "expiryDate": "2025-12-31",
-                "recorded_at": "2024-09-01T08:30:00Z",
-                "used_at": null,
-                "created_at": "2024-09-01T08:00:00Z",
-                "updated_at": "2024-09-01T09:00:00Z",
-                "consumption": "Consumed",
-                "consigned": "No",
-                "upn_number": 54321,
-                "ifu_link": "http://example.com/ifu.pdf",
-                "img_src": "http://example.com/image.jpg",
-                "loaned": "No",
-                "transaction_type": "Used, Patient Procedure",
-                "site": "Achilles Tendon",
-                "side": "Arm",
-                "type": "Implant",
-                "quantity": 100,
-                "price": 500.00
-              }
-            }
-          }
         }
       ]
     }
